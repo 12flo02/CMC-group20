@@ -77,9 +77,55 @@ def plot_2d(results, labels, n_data=300, log=False, cmap=None):
     plt.ylabel(labels[1])
     cbar = plt.colorbar()
     cbar.set_label(labels[2])
+    
+    
+def plot_specific_plot(data_array, x_data, y_data, legend, exercise, plot_name, plot_title):
+    
+    plt.figure(str(plot_name) + str(exercise), 
+               figsize=[8, 6],
+               dpi = 300)
+    plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
+    plt.imshow(data_array, interpolation='nearest', cmap=plt.cm.hot)
+    plt.xlabel(legend[0])
+    plt.ylabel(legend[1])
+    plt.colorbar()
+    plt.gca().invert_yaxis()
+    plt.xticks(np.arange(len(x_data)), x_data)
+    plt.yticks(np.arange(len(y_data)), y_data)
+    plt.title('Grid Search with ' + str(plot_title) + ' traveled Score')
+    plt.savefig("graphs/" + str(plot_name) + "_" + str(exercise) + ".png")
+    # plt.savefig("graphs/distance_" + str(exercise) + ".eps")
+    plt.show()
+
+    return
+
+def plot_color_plots(exercise = None, data_array = None, simulation = None, phase_lag_vector = None, amplitude_vector=None, Rhead_vector=None, Rtail_vector=None, data_array_full = False):
+    
+    plot_name = ['distance', 'energy', 'speed']
+    plot_title = ['distance traveled', 'energy', 'speed']
+    
+    if exercise == 'exercise_8b__':
+        x_data = [round(num, 3) for num in phase_lag_vector]
+        y_data = [round(num, 3) for num in amplitude_vector]
+        legend = ['phase lag vector', 'amplitude vector']
+    elif exercise == 'exercise_8c__':
+        x_data = [round(num, 3) for num in Rhead_vector]
+        y_data = [round(num, 3) for num in Rtail_vector]
+        legend = ['head amplitudes', 'tail amplitudes']
+    
+    """ PLOT :
+        - DISTANCE
+        - ENERGY
+        - SPEED """
+    for i in range(0, 3) :
+        plot_specific_plot(data_array[:,:,i], x_data, y_data, legend, exercise, plot_name[i], plot_title[i])
+        
+        
+    return
 
 
 def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None, amplitude_vector=None, Rhead_vector=None, Rtail_vector=None, color_map_array = None):
+    
     """Main"""
     # Load data    
     if exercise == None:
@@ -323,125 +369,8 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
         plt.show()
     else:
         save_figures()
-
-def plot_color_plots(exercise = None, data_array = None, simulation = None, phase_lag_vector = None, amplitude_vector=None, Rhead_vector=None, Rtail_vector=None, data_array_full = False):
-    if exercise == 'exercise_8b__':
-        """DISTANCE"""
-        plt.figure("distance" + str(exercise), 
-                   figsize=[8, 6],
-                   dpi = 300)
-        plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
-        plt.imshow(data_array[:,:,0], interpolation='nearest', cmap=plt.cm.hot)
-        plt.xlabel('phase lag vector')
-        plt.ylabel('amplitude vector')
-        plt.colorbar()
-        plt.gca().invert_yaxis()
-        phase_lag_vector = [round(num, 3) for num in phase_lag_vector]
-        amplitude_vector = [round(num, 3) for num in amplitude_vector]
-        plt.xticks(np.arange(len(phase_lag_vector)), phase_lag_vector)
-        plt.yticks(np.arange(len(amplitude_vector)), amplitude_vector)
-        plt.title('Grid Search with distance traveled Score')
-        # plt.show()
-        plt.savefig("graphs/distance_" + str(exercise) + ".png")
-        # plt.savefig("graphs/distance_" + str(exercise) + ".eps")
-
         
-        """ENERGY"""
-        plt.figure("energy" + str(exercise), 
-                   figsize=(8, 6),
-                   dpi = 300)
-        plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
-        plt.imshow(data_array[:,:,1], interpolation='nearest', cmap=plt.cm.hot)
-        plt.xlabel('phase lag vector')
-        plt.ylabel('amplitude vector')
-        plt.colorbar()
-        plt.gca().invert_yaxis()
-        phase_lag_vector = [round(num, 3) for num in phase_lag_vector]
-        amplitude_vector = [round(num, 3) for num in amplitude_vector]
-        plt.xticks(np.arange(len(phase_lag_vector)), phase_lag_vector)
-        plt.yticks(np.arange(len(amplitude_vector)), amplitude_vector)
-        plt.title('Grid Search with energy Score')
-        # plt.show()
-        plt.savefig("graphs/energy_" + str(exercise) + ".png")
-        # plt.savefig("graphs/energy_" + str(exercise) + ".eps")
-        
-        """SPEED"""
-        plt.figure("speed" + str(exercise), 
-                   figsize=(8, 6),
-                   dpi = 300)
-        plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
-        plt.imshow(data_array[:,:,2], interpolation='nearest', cmap=plt.cm.hot)
-        plt.xlabel('phase lag vector')
-        plt.ylabel('amplitude vector')
-        plt.colorbar()
-        plt.gca().invert_yaxis()
-        phase_lag_vector = [round(num, 3) for num in phase_lag_vector]
-        amplitude_vector = [round(num, 3) for num in amplitude_vector]
-        plt.xticks(np.arange(len(phase_lag_vector)), phase_lag_vector)
-        plt.yticks(np.arange(len(amplitude_vector)), amplitude_vector)
-        plt.title('Grid Search with speed Score')
-        # plt.show()
-        plt.savefig("graphs/speed_" + str(exercise) + ".png")
-        # plt.savefig("graphs/speed_" + str(exercise) + ".eps")
-        
-        
-    if exercise == 'exercise_8c__':
-        """DISTANCE"""
-        plt.figure("distance" + str(exercise), 
-                   figsize=(8, 6),
-                   dpi = 300)
-        plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
-        plt.imshow(data_array[:,:,0], interpolation='nearest', cmap=plt.cm.hot)
-        plt.xlabel('head amplitudes')
-        plt.ylabel('tail amplitudes')
-        plt.colorbar()
-        plt.gca().invert_yaxis()
-        Rhead_vector = [round(num, 3) for num in Rhead_vector]
-        Rtail_vector = [round(num, 3) for num in Rtail_vector]
-        plt.xticks(np.arange(len(Rhead_vector)), Rhead_vector)
-        plt.yticks(np.arange(len(Rtail_vector)), Rtail_vector)
-        plt.title('Grid Search with distance traveled Score')
-        plt.show()
-        plt.savefig("distance_" + str(exercise) + ".png")
-        # plt.savefig("distance_" + str(exercise) + ".eps")
-        
-        """ENERGY"""
-        plt.figure("energy" + str(exercise), 
-                   figsize=(8, 6),
-                   dpi = 300)
-        plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
-        plt.imshow(data_array[:,:,1], interpolation='nearest', cmap=plt.cm.hot)
-        plt.xlabel('head amplitudes')
-        plt.ylabel('tail amplitudes')
-        plt.colorbar()
-        plt.gca().invert_yaxis()
-        Rhead_vector = [round(num, 3) for num in Rhead_vector]
-        Rtail_vector = [round(num, 3) for num in Rtail_vector]
-        plt.xticks(np.arange(len(Rhead_vector)), Rhead_vector)
-        plt.yticks(np.arange(len(Rtail_vector)), Rtail_vector)
-        plt.title('Grid Search with energy Score')
-        plt.show()
-        plt.savefig("energy_" + str(exercise) + ".png")
-        # plt.savefig("energy_" + str(exercise) + ".eps")
-        
-        """SPEED"""
-        plt.figure("speed" + str(exercise), 
-                   figsize=(8, 6),
-                   dpi = 300)
-        plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
-        plt.imshow(data_array[:,:,2], interpolation='nearest', cmap=plt.cm.hot)
-        plt.xlabel('head amplitudes')
-        plt.ylabel('tail amplitudes')
-        plt.colorbar()
-        plt.gca().invert_yaxis()
-        Rhead_vector = [round(num, 3) for num in Rhead_vector]
-        Rtail_vector = [round(num, 3) for num in Rtail_vector]
-        plt.xticks(np.arange(len(Rhead_vector)), Rhead_vector)
-        plt.yticks(np.arange(len(Rtail_vector)), Rtail_vector)
-        plt.title('Grid Search with speed Score')
-        plt.show()
-        plt.savefig("speed_" + str(exercise) + ".png")
-        # plt.savefig("speed_" + str(exercise) + ".eps")
+    
     
 
 if __name__ == '__main__':
