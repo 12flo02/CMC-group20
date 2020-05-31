@@ -19,7 +19,7 @@ def exercise_example(timestep):
             spawn_orientation=[0, 0, 0],  # Orientation in Euler angles [rad]
             drive_mlr=3.01,  # An example of parameter part of the grid search
             exercise_example = True,
-            phase_lag = 3/2*np.pi,
+            phase_lag = 7/2*np.pi,
             amplitude_body = 0.2,
             amplitude_limb = 0,
             # amplitudes=0,  # Just an example

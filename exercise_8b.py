@@ -110,23 +110,28 @@ def plot_all_trajectories(phase_lag_vector, amplitude_vector, nb_phase, experien
 
 if __name__ == '__main__':
     
-    experience_name = 'exercise_8b__test'
-    nb_phase = 3
-    nb_amp = 3
+    experience_name = 'exercise_8b__'
+    nb_phase = 10
+    nb_amp = 10
     nb_simulation = nb_phase * nb_amp
     
-    phase_lag_vector = np.linspace(np.pi, 3/2* np.pi, nb_phase)
-    # phase_lag_vector = [3/2*np.pi]
+    if nb_amp == 1:
+       phase_lag_vector = [3/2*np.pi] 
+    else:
+        phase_lag_vector = np.linspace(1/2*np.pi, 5/2*np.pi, nb_phase)
+    
     if nb_amp == 1:
         amplitude_vector = [0.261]
     else:
-        amplitude_vector = np.linspace(0.1, 0.2, nb_amp)
+        amplitude_vector = np.linspace(0.15, 0.521, nb_amp)
 
     
-    exercise_8b(timestep=1e-2, 
-                phase_lag_vector = phase_lag_vector, 
-                amplitude_vector = amplitude_vector,
-                experience = experience_name)
+# =============================================================================
+#     exercise_8b(timestep=1e-2, 
+#                 phase_lag_vector = phase_lag_vector, 
+#                 amplitude_vector = amplitude_vector,
+#                 experience = experience_name)
+# =============================================================================
     
     plot_all_trajectories(phase_lag_vector, 
                           amplitude_vector, 

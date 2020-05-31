@@ -108,7 +108,7 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
         
         
     """ ==================================================================="""    
-    if exercise == 'exercise_8b__':
+    if exercise == 'exercise_8b__' :
         simulation = range(len(amplitude_vector)*len(phase_lag_vector))
         for i, simul in enumerate(simulation):
             filename = './logs/{}/simulation_{}.h5'
@@ -249,7 +249,13 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
             color_map_array[k,l,1] = energy
             color_map_array[k,l,2] = head_tot_speed
             if(k == len(Rhead_vector)-1 and l == len(Rhead_vector)-1):
-                plot_color_plots(exercise = exercise, data_array = color_map_array, simulation = simulation, phase_lag_vector = phase_lag_vector, amplitude_vector=amplitude_vector, Rhead_vector=Rhead_vector, Rtail_vector=Rtail_vector)
+                plot_color_plots(exercise = exercise, 
+                                 data_array = color_map_array, 
+                                 simulation = simulation, 
+                                 phase_lag_vector = phase_lag_vector, 
+                                 amplitude_vector=amplitude_vector, 
+                                 Rhead_vector=Rhead_vector, 
+                                 Rtail_vector=Rtail_vector)
         
             
     """ ==================================================================="""
@@ -321,7 +327,9 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
 def plot_color_plots(exercise = None, data_array = None, simulation = None, phase_lag_vector = None, amplitude_vector=None, Rhead_vector=None, Rtail_vector=None, data_array_full = False):
     if exercise == 'exercise_8b__':
         """DISTANCE"""
-        plt.figure(figsize=(8, 6))
+        plt.figure("distance" + str(exercise), 
+                   figsize=[8, 6],
+                   dpi = 300)
         plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
         plt.imshow(data_array[:,:,0], interpolation='nearest', cmap=plt.cm.hot)
         plt.xlabel('phase lag vector')
@@ -333,10 +341,15 @@ def plot_color_plots(exercise = None, data_array = None, simulation = None, phas
         plt.xticks(np.arange(len(phase_lag_vector)), phase_lag_vector)
         plt.yticks(np.arange(len(amplitude_vector)), amplitude_vector)
         plt.title('Grid Search with distance traveled Score')
-        plt.show()
+        # plt.show()
+        plt.savefig("graphs/distance_" + str(exercise) + ".png")
+        # plt.savefig("graphs/distance_" + str(exercise) + ".eps")
+
         
         """ENERGY"""
-        plt.figure(figsize=(8, 6))
+        plt.figure("energy" + str(exercise), 
+                   figsize=(8, 6),
+                   dpi = 300)
         plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
         plt.imshow(data_array[:,:,1], interpolation='nearest', cmap=plt.cm.hot)
         plt.xlabel('phase lag vector')
@@ -348,10 +361,14 @@ def plot_color_plots(exercise = None, data_array = None, simulation = None, phas
         plt.xticks(np.arange(len(phase_lag_vector)), phase_lag_vector)
         plt.yticks(np.arange(len(amplitude_vector)), amplitude_vector)
         plt.title('Grid Search with energy Score')
-        plt.show()
+        # plt.show()
+        plt.savefig("graphs/energy_" + str(exercise) + ".png")
+        # plt.savefig("graphs/energy_" + str(exercise) + ".eps")
         
         """SPEED"""
-        plt.figure(figsize=(8, 6))
+        plt.figure("speed" + str(exercise), 
+                   figsize=(8, 6),
+                   dpi = 300)
         plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
         plt.imshow(data_array[:,:,2], interpolation='nearest', cmap=plt.cm.hot)
         plt.xlabel('phase lag vector')
@@ -363,12 +380,16 @@ def plot_color_plots(exercise = None, data_array = None, simulation = None, phas
         plt.xticks(np.arange(len(phase_lag_vector)), phase_lag_vector)
         plt.yticks(np.arange(len(amplitude_vector)), amplitude_vector)
         plt.title('Grid Search with speed Score')
-        plt.show()
+        # plt.show()
+        plt.savefig("graphs/speed_" + str(exercise) + ".png")
+        # plt.savefig("graphs/speed_" + str(exercise) + ".eps")
         
         
     if exercise == 'exercise_8c__':
         """DISTANCE"""
-        plt.figure(figsize=(8, 6))
+        plt.figure("distance" + str(exercise), 
+                   figsize=(8, 6),
+                   dpi = 300)
         plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
         plt.imshow(data_array[:,:,0], interpolation='nearest', cmap=plt.cm.hot)
         plt.xlabel('head amplitudes')
@@ -381,9 +402,13 @@ def plot_color_plots(exercise = None, data_array = None, simulation = None, phas
         plt.yticks(np.arange(len(Rtail_vector)), Rtail_vector)
         plt.title('Grid Search with distance traveled Score')
         plt.show()
+        plt.savefig("distance_" + str(exercise) + ".png")
+        # plt.savefig("distance_" + str(exercise) + ".eps")
         
         """ENERGY"""
-        plt.figure(figsize=(8, 6))
+        plt.figure("energy" + str(exercise), 
+                   figsize=(8, 6),
+                   dpi = 300)
         plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
         plt.imshow(data_array[:,:,1], interpolation='nearest', cmap=plt.cm.hot)
         plt.xlabel('head amplitudes')
@@ -394,11 +419,15 @@ def plot_color_plots(exercise = None, data_array = None, simulation = None, phas
         Rtail_vector = [round(num, 3) for num in Rtail_vector]
         plt.xticks(np.arange(len(Rhead_vector)), Rhead_vector)
         plt.yticks(np.arange(len(Rtail_vector)), Rtail_vector)
-        plt.title('Grid Search with energy traveled Score')
+        plt.title('Grid Search with energy Score')
         plt.show()
+        plt.savefig("energy_" + str(exercise) + ".png")
+        # plt.savefig("energy_" + str(exercise) + ".eps")
         
         """SPEED"""
-        plt.figure(figsize=(8, 6))
+        plt.figure("speed" + str(exercise), 
+                   figsize=(8, 6),
+                   dpi = 300)
         plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
         plt.imshow(data_array[:,:,2], interpolation='nearest', cmap=plt.cm.hot)
         plt.xlabel('head amplitudes')
@@ -409,10 +438,12 @@ def plot_color_plots(exercise = None, data_array = None, simulation = None, phas
         Rtail_vector = [round(num, 3) for num in Rtail_vector]
         plt.xticks(np.arange(len(Rhead_vector)), Rhead_vector)
         plt.yticks(np.arange(len(Rtail_vector)), Rtail_vector)
-        plt.title('Grid Search with speed traveled Score')
+        plt.title('Grid Search with speed Score')
         plt.show()
+        plt.savefig("speed_" + str(exercise) + ".png")
+        # plt.savefig("speed_" + str(exercise) + ".eps")
     
 
 if __name__ == '__main__':
-    main(plot=not save_plots())
+    main_2(plot=not save_plots())
 
