@@ -21,7 +21,7 @@ def exercise_8b(timestep, phase_lag_vector, amplitude_vector, experience):
             timestep=timestep,  # Simulation timestep in [s]
             spawn_position=[0, 0, 0.1],  # Robot position in [m]
             spawn_orientation=[0, 0, 0],  # Orientation in Euler angles [rad]
-            drive=2,  # An example of parameter part of the grid search
+            drive_mlr = 3.01,  # An example of parameter part of the grid search
             amplitude_body=amplitudes,  # Just an example
             phase_lag=phase_lag,  # or np.zeros(n_joints) for example
             turn=0,
@@ -82,21 +82,23 @@ def plot_all_trajectories(phase_lag_vector, amplitude_vector, nb_phase, experien
     
     color_map_array_blank = np.zeros((len(amplitude_vector),len(phase_lag_vector),3))
     
-    for i in range(nb_phase):
-        legend.append("%.2f" %(phase_lag_vector[i]))
-    
-    # legend = [string + x for x in legend]
-    
-    for i, amp in enumerate(amplitude_vector) :
-        print(i*nb_phase)
-        print((i+1)*nb_phase - 1)
-        simulation = np.arange(i*nb_phase, (i+1)*nb_phase)   
-        print(simulation)
-        main(plot=True, 
-             exercise = experience_name, 
-             simulation = simulation, 
-             amplitude = amp, 
-             phase_legend = legend)
+# =============================================================================
+#     for i in range(nb_phase):
+#         legend.append("%.2f" %(phase_lag_vector[i]))
+#     
+#     # legend = [string + x for x in legend]
+#     
+#     for i, amp in enumerate(amplitude_vector) :
+#         print(i*nb_phase)
+#         print((i+1)*nb_phase - 1)
+#         simulation = np.arange(i*nb_phase, (i+1)*nb_phase)   
+#         print(simulation)
+#         main(plot=True, 
+#              exercise = experience_name, 
+#              simulation = simulation, 
+#              amplitude = amp, 
+#              phase_legend = legend)
+# =============================================================================
 
     main_2(plot=True, 
          exercise = experience_name, 
