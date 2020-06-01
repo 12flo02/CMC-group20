@@ -97,8 +97,8 @@ def simulation(
         # network.robot_parameters.update_iteration(iteration)
         # Position of head: gps.urdf_position(iteration=iteration, link_i=0)
         # You can make changes to sim_parameters and then update with:
-        # sim_parameters.current_iter = iteration    
-        # network.robot_parameters.update(sim_parameters)
+        sim_parameters.current_iter = iteration    
+        network.robot_parameters.update(sim_parameters)
         assert iteration >= 0
 
     # Terminate simulation

@@ -25,13 +25,25 @@ def plot_positions(times, link_data):
     plt.grid(True)
 
 
-def plot_trajectory(link_data):
+def plot_trajectory(link_data, current_exercise=None, drive_time_changes=None):
     """Plot positions"""
-    plt.plot(link_data[:, 0], link_data[:, 1])
-    plt.xlabel("x [m]")
-    plt.ylabel("y [m]")
-    plt.axis("equal")
-    plt.grid(True)
+    if (current_exercise == 'exercise_8d1__'):
+        plt.plot(link_data[0:drive_time_changes[0], 0], link_data[0:drive_time_changes[0], 1], 'b', label='Normal swimming behavior')
+        plt.plot(link_data[drive_time_changes[0]:drive_time_changes[1], 0], link_data[drive_time_changes[0]:drive_time_changes[1], 1], 'r', label='Asynchronous drive')
+        plt.plot(link_data[drive_time_changes[1]:, 0], link_data[drive_time_changes[1]:, 1], 'g', label='Normal swimming behavior resumes')
+        plt.xlabel("x [m]")
+        plt.ylabel("y [m]")
+        plt.axis("equal")
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+
+    else:
+        plt.plot(link_data[:, 0], link_data[:, 1])
+        plt.xlabel("x [m]")
+        plt.ylabel("y [m]")
+        plt.axis("equal")
+        plt.grid(True)
 
 
 def plot_2d(results, labels, n_data=300, log=False, cmap=None):
@@ -124,7 +136,7 @@ def plot_color_plots(exercise = None, data_array = None, simulation = None, phas
     return
 
 
-def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None, amplitude_vector=None, Rhead_vector=None, Rtail_vector=None, color_map_array = None):
+def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None, amplitude_vector=None, Rhead_vector=None, Rtail_vector=None, color_map_array = None, u_turn_params=None):
     
     """Main"""
     # Load data    
@@ -179,9 +191,7 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
             joints_torques = np.asarray(data.sensors.proprioception.motor_torques())
             
             
-            energy = np.absolute(joints_velocities[:,1:11]*joints_torques[:,1:11])
-            energy = np.sum(energy*timestep)
-            
+            """ MEAN VELOCITY """
             head_dist = (head_positions[-1,0]**2+head_positions[-1,1]**2)**0.5
             tail_dist = (tail_positions[-1,0]**2+tail_positions[-1,1]**2)**0.5
             
@@ -190,11 +200,16 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
             else:
                 traveled_dist = head_dist
                 
+            mean_velocity = traveled_dist/10;
             
-            head_speed = np.zeros((1000,3))
-            for j in range(999):
-                head_speed[i+1,:] = (head_positions[i+1,:]-head_positions[i,:])/timestep
-            head_tot_speed = max((np.sum(head_speed**2,axis=1))**0.5)
+            """ ENERGY METRIC """
+            energy = np.absolute(joints_velocities[:,1:11]*joints_torques[:,1:11])
+            energy = np.sum(energy*timestep)
+            
+            """ COST FUNCTION """
+            energy_normalized = energy/278.582
+            speed_normalized = mean_velocity/0.6837
+            cost = energy_normalized/speed_normalized
             
             #This just makes sure the indexes are correct. Simpler solutions may exist...
             length = len(phase_lag_vector)
@@ -207,7 +222,8 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
                 
             color_map_array[k,l,0] = traveled_dist
             color_map_array[k,l,1] = energy
-            color_map_array[k,l,2] = head_tot_speed
+            color_map_array[k,l,2] = mean_velocity# OR PLOT cost
+            
             if(k == len(phase_lag_vector)-1 and l == len(phase_lag_vector)-1):
                 plot_color_plots(exercise = exercise,
                                  data_array = color_map_array,
@@ -216,6 +232,12 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
                                  amplitude_vector=amplitude_vector,
                                  Rhead_vector=Rhead_vector,
                                  Rtail_vector=Rtail_vector)
+            
+            plt.figure("Trajectory of the head",
+                       figsize = [8,6],
+                       dpi = 300)
+            plt.title("Trajectory of the head - exercise 8c")
+            plot_trajectory(head_positions)
         
         """DISCUTER AVEC FLO SI/COMMENT REINTEGRER CA PROPREMENT"""    
         #     plt.figure("Trajectory_amplitude_%.3f" %(amplitude))
@@ -261,6 +283,7 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
             joints_velocities = np.asarray(data.sensors.proprioception.velocities_all())
             joints_torques = np.asarray(data.sensors.proprioception.motor_torques())
             
+            """ MEAN VELOCITY """
             head_dist = (head_positions[-1,0]**2+head_positions[-1,1]**2)**0.5
             tail_dist = (tail_positions[-1,0]**2+tail_positions[-1,1]**2)**0.5
             
@@ -268,19 +291,17 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
                 traveled_dist = -head_dist
             else:
                 traveled_dist = head_dist
+                
+            mean_velocity = traveled_dist/10;
             
+            """ ENERGY METRIC """
             energy = np.absolute(joints_velocities[:,1:11]*joints_torques[:,1:11])
             energy = np.sum(energy*timestep)
             
-            
-            # traveled_dist = (np.sum((head_positions[-1,:]+[0,0,0.1])**2))**0.5 #to compensate spawn at (0,0,0.1)
-            # if (head_positions[-1,0] < -0.1 and head_positions[-1,2] < -0.1):
-            #     traveled_dist = -traveled_dist
-            
-            head_speed = np.zeros((1000,3))
-            for j in range(999):
-                head_speed[i+1,:] = (head_positions[i+1,:]-head_positions[i,:])/timestep
-            head_tot_speed = max((np.sum(head_speed**2,axis=1))**0.5)
+            """ COST FUNCTION """
+            energy_normalized = energy/278.582
+            speed_normalized = mean_velocity/0.6837
+            cost = energy_normalized/speed_normalized
             
             #This just makes sure the indexes are correct. Simpler solutions may exist...
             length = len(Rhead_vector)
@@ -293,7 +314,8 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
                 
             color_map_array[k,l,0] = traveled_dist
             color_map_array[k,l,1] = energy
-            color_map_array[k,l,2] = head_tot_speed
+            color_map_array[k,l,2] = mean_velocity# OR PLOT cost
+            
             if(k == len(Rhead_vector)-1 and l == len(Rhead_vector)-1):
                 plot_color_plots(exercise = exercise, 
                                  data_array = color_map_array, 
@@ -306,61 +328,44 @@ def main_2(plot=True, exercise = None, simulation = [], phase_lag_vector = None,
             
     """ ==================================================================="""
     if exercise == 'exercise_8d1__':
-        simulation = range(len(phase_lag_vector))
-        for i, simul in enumerate(simulation):
-            filename = './logs/{}/simulation_{}.h5'
-            filename = filename.format(exercise, simul)
-            data = AnimatData.from_file(filename, 2*14)  
-            print(filename)
-            
-            filename = './logs/{}/simulation_{}.pickle'
-            filename = filename.format(exercise, simul)
-
-            with open(filename, 'rb') as param_file:
-                parameters = pickle.load(param_file)
-            times = data.times
-            timestep = times[1] - times[0]  # Or parameters.timestep
-            osc_phases = np.asarray(data.state.phases_all())
-            osc_amplitudes = np.asarray(data.state.amplitudes_all())
-            links_positions = np.asarray(data.sensors.gps.urdf_positions())
-            head_positions = np.asarray(links_positions[:, 0, :])
-            tail_positions = np.asarray(links_positions[:, 10, :])
-            joints_positions = np.asarray(data.sensors.proprioception.positions_all())
-            joints_velocities = np.asarray(data.sensors.proprioception.velocities_all())
-            joints_torques = np.asarray(data.sensors.proprioception.motor_torques())
-            
-            plt.figure("Total phase lag of " + str(phase_lag_vector[i]))
-            plt.title("Total phase lag of " + str(phase_lag_vector[i]))
-            plot_trajectory(head_positions)
+        data = AnimatData.from_file('logs/exercise_8d1__/simulation_0.h5', 2*14) 
+        with open('./logs/example/simulation_0.pickle', 'rb') as param_file:
+            parameters = pickle.load(param_file)
+        print("exercise_8d1")
+        
+        times = data.times
+        timestep = times[1] - times[0]  # Or parameters.timestep
+        links_positions = np.asarray(data.sensors.gps.urdf_positions())
+        head_positions = np.asarray(links_positions[:, 0, :])
+        tail_positions = np.asarray(links_positions[:, 10, :])
+        joints_positions = np.asarray(data.sensors.proprioception.positions_all())
+        
+        plt.figure("Exercise 8d1: implementation of the U turn",
+                       figsize = [8,6],
+                       dpi = 300)
+        plt.title("Exercise 8d1: implementation of the U turn")
+        plot_trajectory(head_positions, current_exercise=exercise, drive_time_changes=u_turn_params)
     
     """ ==================================================================="""
     if exercise == 'exercise_8d2__':
-        simulation = range(1)
-        for i, simul in enumerate(simulation):
-            filename = './logs/{}/simulation_{}.h5'
-            filename = filename.format(exercise, simul)
-            data = AnimatData.from_file(filename, 2*14)  
-            print(filename)
-            
-            filename = './logs/{}/simulation_{}.pickle'
-            filename = filename.format(exercise, simul)
-
-            with open(filename, 'rb') as param_file:
-                parameters = pickle.load(param_file)
-            times = data.times
-            timestep = times[1] - times[0]  # Or parameters.timestep
-            osc_phases = np.asarray(data.state.phases_all())
-            osc_amplitudes = np.asarray(data.state.amplitudes_all())
-            links_positions = np.asarray(data.sensors.gps.urdf_positions())
-            head_positions = np.asarray(links_positions[:, 0, :])
-            tail_positions = np.asarray(links_positions[:, 10, :])
-            joints_positions = np.asarray(data.sensors.proprioception.positions_all())
-            joints_velocities = np.asarray(data.sensors.proprioception.velocities_all())
-            joints_torques = np.asarray(data.sensors.proprioception.motor_torques())
-            
-            plt.figure("Exercise 8d2 - salamandra moves backwards")
-            plt.title("Exercise 8d2 - salamandra moves backwards")
-            plot_trajectory(head_positions)
+        data = AnimatData.from_file('logs/exercise_8d__/simulation_1.h5', 2*14) 
+        with open('./logs/example/simulation_1.pickle', 'rb') as param_file:
+            parameters = pickle.load(param_file)
+        print(filename)
+        times = data.times
+        timestep = times[1] - times[0]  # Or parameters.timestep
+        osc_phases = np.asarray(data.state.phases_all())
+        osc_amplitudes = np.asarray(data.state.amplitudes_all())
+        links_positions = np.asarray(data.sensors.gps.urdf_positions())
+        head_positions = np.asarray(links_positions[:, 0, :])
+        tail_positions = np.asarray(links_positions[:, 10, :])
+        joints_positions = np.asarray(data.sensors.proprioception.positions_all())
+        joints_velocities = np.asarray(data.sensors.proprioception.velocities_all())
+        joints_torques = np.asarray(data.sensors.proprioception.motor_torques())
+        
+        plt.figure("Exercise 8d2 - salamandra moves backwards")
+        plt.title("Exercise 8d2 - salamandra moves backwards")
+        plot_trajectory(head_positions)
         
     
         
