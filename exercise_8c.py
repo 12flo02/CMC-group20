@@ -16,14 +16,10 @@ def exercise_8c(timestep, Rhead_vector, Rtail_vector, experience):
             timestep=timestep,  # Simulation timestep in [s]
             spawn_position=[0, 0, 0.1],  # Robot position in [m]
             spawn_orientation=[0, 0, 0],  # Orientation in Euler angles [rad]
-            drive_mlr=4,  # An example of parameter part of the grid search
+            drive_mlr=3,  # An example of parameter part of the grid search
             amplitudes = [Rheads, Rtails],
-            turn=0,
-            exercise_8b = False,
+            phase_lag=2*np.pi,
             exercise_8c = True,
-            exercise_8d1 = False
-        
-            # ...
         )
         for Rheads in Rhead_vector
         for Rtails in Rtail_vector
@@ -35,8 +31,8 @@ def exercise_8c(timestep, Rhead_vector, Rtail_vector, experience):
         sim, data = simulation( 
             sim_parameters=sim_parameters,  # Simulation parameters, see above
             arena='water',  # Can also be 'ground' or 'amphibious'
-            fast=True,  # For fast mode (not real-time)
-            headless=True,  # For headless mode (No GUI, could be faster)
+            # fast=True,  # For fast mode (not real-time)
+            # headless=True,  # For headless mode (No GUI, could be faster)
             # record=True,  # Record video, see below for saving
             # video_distance=1.5,  # Set distance of camera to robot
             # video_yaw=0,  # Set camera yaw for recording
@@ -74,8 +70,8 @@ if __name__ == '__main__':
     
     #0.521 seems to be too much (mvmts are too wide !)
     #USUAL RANGE IS: [0.261, 0.521]
-    RheadVector = np.linspace(0.05,1,2)
-    RtailVector = np.linspace(0.05,1,2)
+    RheadVector = np.linspace(0.06,0.521,1)
+    RtailVector = np.linspace(0.351,0.521,1)
     
     color_map_array_blank = np.zeros((len(RheadVector),len(RheadVector),3))
     

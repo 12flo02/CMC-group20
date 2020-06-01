@@ -147,7 +147,7 @@ class SalamandraNetwork:
 # =============================================================================
         self.state.set_phases(
             iteration=0,
-            value=1e-4*np.random.ranf(self.robot_parameters.n_oscillators),
+            value=1e-1*np.random.ranf(self.robot_parameters.n_oscillators),
         )
         
 # =============================================================================

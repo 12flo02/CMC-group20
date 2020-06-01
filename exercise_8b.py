@@ -24,7 +24,6 @@ def exercise_8b(timestep, phase_lag_vector, amplitude_vector, experience):
             drive=2,  # An example of parameter part of the grid search
             amplitude_body=amplitudes,  # Just an example
             phase_lag=phase_lag,  # or np.zeros(n_joints) for example
-            turn=0,
             exercise_8b = True  # Another example
             # ...
         )
@@ -41,8 +40,8 @@ def exercise_8b(timestep, phase_lag_vector, amplitude_vector, experience):
         sim, data = simulation( 
             sim_parameters=sim_parameters,  # Simulation parameters, see above
             arena='water',  # Can also be 'ground' or 'amphibious'
-            fast=True,  # For fast mode (not real-time)
-            headless=True,  # For headless mode (No GUI, could be faster)
+            # fast=True,  # For fast mode (not real-time)
+            # headless=True,  # For headless mode (No GUI, could be faster)
             # record=True,  # Record video, see below for saving
             # video_distance=1.5,  # Set distance of camera to robot
             # video_yaw=0,  # Set camera yaw for recording
@@ -111,8 +110,8 @@ def plot_all_trajectories(phase_lag_vector, amplitude_vector, nb_phase, experien
 if __name__ == '__main__':
     
     experience_name = 'exercise_8b__'
-    nb_phase = 10
-    nb_amp = 10
+    nb_phase = 1
+    nb_amp = 1
     nb_simulation = nb_phase * nb_amp
     
     if nb_amp == 1:
@@ -126,12 +125,12 @@ if __name__ == '__main__':
         amplitude_vector = np.linspace(0.15, 0.521, nb_amp)
 
     
-# =============================================================================
-#     exercise_8b(timestep=1e-2, 
-#                 phase_lag_vector = phase_lag_vector, 
-#                 amplitude_vector = amplitude_vector,
-#                 experience = experience_name)
-# =============================================================================
+
+    exercise_8b(timestep=1e-2, 
+                phase_lag_vector = phase_lag_vector, 
+                amplitude_vector = amplitude_vector,
+                experience = experience_name)
+
     
     plot_all_trajectories(phase_lag_vector, 
                           amplitude_vector, 

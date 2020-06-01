@@ -32,6 +32,7 @@ class SimulationParameters:
         self.exercise_example = False
         # Feel free to add more parameters (ex: MLR drive)
         self.drive_mlr = kwargs.get("drive_mlr", 2)
+        self.u_turn_params = np.zeros(2)
 # =============================================================================
 #         self.amplitude_body = kwargs.get("amplitude_doby", 0.326)
 #         self.phase_lag = kwargs.get("phase_lag", np.pi/4)
