@@ -112,7 +112,9 @@ def run_network(duration, update=True, drive=0):
         toc - tic
     ))
     
-    return times, drive, freqs_log, amplitudes_log, outputs_log
+    return times, drive, freqs_log, amplitudes_log, outputs_log, phases_log
+
+
 
 #%%
 def find_start_stop_salamandra(freqs_log):
@@ -124,11 +126,14 @@ def find_start_stop_salamandra(freqs_log):
     return np.array([start, stop_limb,stop_body])
 
 #%%
-def plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log):
-#%%
+def plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log, phases_log):
+
     # Implement plots of network results
     timestep = 1e-1
     index = timestep*find_start_stop_salamandra(freqs_log)
+    
+    output_body_label = ["$x_0$", "$x_1$", "$x_2$", "$x_3$", "$x_4$",
+                        "$x_5$", "$x_6$", "$x_7$", "$x_8$", "$x_9$"]
 # =============================================================================
 #     
 #     plt.rc('axes', facecolor='#E6E6E6', edgecolor='none',
@@ -166,7 +171,8 @@ def plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log):
     ax_amp.set_xlim(min(drive), max(drive))
     ax_amp.set_ylim(0, 0.7)
      
-    
+    plt.savefig("Figure_3b_Ijspeert.jpg")
+    plt.savefig("Figure_3b_Ijspeert.eps")
     
     
     """ Second  figure, drive,, frequency, limb output, body output as a function of time"""
@@ -187,7 +193,7 @@ def plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log):
     """head blue for trunk ans green for tail"""
     for _, idx in enumerate(index):
         ax_x_body.axvline(x=idx, ymin = -50, ymax = 50, c="0.8", linewidth=1.0, ls=":")
-    for i in range(0,5):
+    for i in range(1,5):
         ax_x_body.plot(times[1:], outputs_log[1:,i] - 2*i, c = 'b')
     for i in range(5,10):
         ax_x_body.plot(times[1:], outputs_log[1:,i] - 2*i, c = 'g')
@@ -199,35 +205,60 @@ def plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log):
     ax_x_body.set_yticks([])
     ax_x_body.set_xlim(0,40)
     # ax_x_body.set_ylim(-20,20)
+    ax_x_body.text(1.0, -4.5, "trunk", size=10, rotation=90.,
+                   ha="center", va="center",
+                   bbox=dict(boxstyle="round",ec='b',fc='w',))
+    ax_x_body.text(1.0, -14, "tail", size=10, rotation=90.,
+                   ha="center", va="center",
+                   bbox=dict(boxstyle="round",ec='g',fc='w',))
+    
+    
+    for i in range (1, 10):
+        ax_x_body.text(3.0, 0.9 - 2*i, "$x_{}$".format(i), size=6, rotation=0.,
+                       ha="center", va="center")
+
+    
     
     
     """X LIMB"""
     for _, idx in enumerate(index):
         ax_x_limb.axvline(x=idx, ymin = -50, ymax = 50, c="0.8", linewidth=1.0, ls=":")  
     ax_x_limb.plot(times[1:], outputs_log[1:,10], c = 'b')
-    ax_x_limb.plot(times[1:], outputs_log[1:,11] - 1, c = 'b')
-    ax_x_limb.plot(times[1:], outputs_log[1:,12] - 2, c = 'g')  
-    ax_x_limb.plot(times[1:], outputs_log[1:,13] - 3, c = 'g')  
+    ax_x_limb.plot(times[1:], outputs_log[1:,11] - 1.1, c = 'b')
+    ax_x_limb.plot(times[1:], outputs_log[1:,12] - 2.2, c = 'g')  
+    ax_x_limb.plot(times[1:], outputs_log[1:,13] - 3.3, c = 'g')  
 
         
     ax_x_limb.set_ylabel("x Limb")
     ax_x_limb.set_xticks([])
-    # ax_x_limb.set_yticks([])
+    ax_x_limb.set_yticks([])
     ax_x_limb.set_xlim(0,40)
     # ax_x_limb.set_ylim(-1.1,1.1)
+    ax_x_limb.text(1.0, -0.5, "trunk", size=10, rotation=90.,
+                   ha="center", va="center",
+                   bbox=dict(boxstyle="round",ec='b',fc='w',))
+    ax_x_limb.text(1.0, -2.5, "tail", size=10, rotation=90.,
+                   ha="center", va="center",
+                   bbox=dict(boxstyle="round",ec='g',fc='w',))
+    
+    for i in range (20,24):
+        label = '$x_{\mathrm{%s}}$' % (i)
+        ax_x_limb.text(3.0, 0.3 - 1.1*(i-20), label, size=6, rotation=0.,
+                       ha="center", va="center")
+        
+
 
     """FREQUENCY"""
-    for _, idx in enumerate(index):
+    instant_freq = np.diff(phases_log, n=1, axis = 0)/(2*np.pi*timestep) 
+    for _, idx in enumerate(index):        
         ax_freqs.axvline(x=idx, ymin = -50, ymax = 50, c="0.8", linewidth=1.0, ls=":") 
-    for i in range(0,20):
-        ax_freqs.plot(times[1:], freqs_log[1:,i], c= 'k')
-    for i in range(0,24):
-        ax_freqs.plot(times[1:], freqs_log[1:,i], c= 'k', ls = '--')
+        for i in range(0,24 ):
+            ax_freqs.plot(times[1:], instant_freq[:,i], c= 'k')
          
     ax_freqs.set_ylabel("freqeuncy [Hz]")
     ax_freqs.set_xticks([])
     ax_freqs.set_xlim(0,40)
-    ax_freqs.set_ylim(-0.1, 1.5)
+    ax_freqs.set_ylim(0, 1.5)
     
     
     """DRIVE"""
@@ -244,11 +275,82 @@ def plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log):
     ax_drive.set_xlabel("time [s]")
     ax_drive.set_ylabel("drive")
     
-    plt.savefig("Figure_3_Ijspeert.jpg")
+    ax_drive.text(4.5, 2, "walking", size=10, rotation=0.,)
+    ax_drive.text(20.5, 4, "swimming", size=10, rotation=0.,)
+    
+    plt.savefig("Figure_3a_Ijspeert.jpg")
+    plt.savefig("Figure_3a_Ijspeert.eps")
     plt.show()
     
-    return
+    
+    
+    
+    """ Third  figure, drive,, frequency, limb output, body output uncoupled"""
+    fig3 = plt.figure("uncoupled output", 
+                      figsize = [8,6],
+                      dpi = 600,
+                      constrained_layout=True
+                      )
+    
+    gs = gridspec.GridSpec(ncols=1, nrows=4, figure=fig3)
+    
+    ax_x_body = fig3.add_subplot(gs[0,:])
+    ax_x_freqs = fig3.add_subplot(gs[1,:])
+    ax_amp = fig3.add_subplot(gs[2,:])
+    ax_drive = fig3.add_subplot(gs[3,:])
+    
+    
+    """X BODY AND LIMB"""
+    ax_x_body.plot(times[1:], outputs_log[1:,1], c = 'k')
+    ax_x_body.plot(times[1:], outputs_log[1:,10] - 2, c = 'k', ls = "--")  
         
+    ax_x_body.set_ylabel("x")
+    ax_x_body.set_xticks([])
+    ax_x_body.set_yticks([])
+    ax_x_body.set_xlim(0,40)
+
+
+    """FREQUENCY"""
+    ax_x_freqs.plot(times[1:], freqs_log[1:,1], c= 'k')
+    ax_x_freqs.plot(times[1:], freqs_log[1:,20], c= 'k', ls = "--")
+         
+    ax_x_freqs.set_ylabel("freqeuncy [Hz]")
+    ax_x_freqs.set_xticks([])
+    ax_x_freqs.set_xlim(0,40)
+    ax_x_freqs.set_ylim(0, 1.5)
+    
+    
+    """AMPLITUDE"""
+    ax_amp.plot(times[1:], amplitudes_log[1:,1], c= 'k')
+    ax_amp.plot(times[1:], amplitudes_log[1:,20], c= 'k', ls = "--")
+         
+    ax_amp.set_ylabel("R")
+    ax_amp.set_xticks([])
+    ax_amp.set_xlim(0,40)
+    ax_amp.set_ylim(0, 0.6)
+    
+    """DRIVE"""      
+    ax_drive.plot(times[1:], drive[1:], c = 'k')
+    ax_drive.axhline(y=1, xmin=0, xmax=40, ls = '--', c = '#F6AD1B', linewidth=1.0)  
+    ax_drive.axhline(y=5, xmin=0, xmax=40, ls = '--', c = '#F6AD1B', linewidth=1.0) 
+    ax_drive.axhline(y=3, xmin=0, xmax=40, ls = '--', c = '#F6AD1B', linewidth=1.0) 
+   
+    ax_drive.set_xlim(0,40)
+    ax_drive.set_ylim(0,6)
+    ax_drive.set_xlabel("time [s]")
+    ax_drive.set_ylabel("drive")
+    
+
+    
+    plt.savefig("Figure_3c_Ijspeert.jpg")
+    plt.savefig("Figure_3c_Ijspeert.eps")
+    plt.show()
+    
+    
+    
+    
+    return
+
 
 #%%
 
@@ -269,8 +371,9 @@ def plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log):
 #     main(plot=not save_plots())
 # =============================================================================
 
-times, drive, freqs_log, amplitudes_log, outputs_log = run_network(duration=40, update = True, drive = 2)
-plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log)
+times, drive, freqs_log, amplitudes_log, outputs_log, phases_log = run_network(duration=40, update = True, drive = 2)
+#%%
+plot_all_graphs(times, drive, freqs_log, amplitudes_log, outputs_log, phases_log)
 
 
 
